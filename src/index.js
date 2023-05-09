@@ -20,6 +20,8 @@ const options = {
   threshold: 1.0
 };
 
+let lightbox = new simpleLightbox('.gallery a');
+
 function onBtnSubmit(e) {
   e.preventDefault();
   gallery.innerHTML = '';
@@ -67,7 +69,6 @@ async function loadContent() {
     }))
 
     gallery.insertAdjacentHTML('beforeend', renderMarkup(images));
-    let lightbox = new simpleLightbox('.gallery a');
     lightbox.refresh();
     const firstChild = gallery.firstElementChild;
 
