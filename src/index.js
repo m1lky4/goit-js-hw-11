@@ -1,35 +1,74 @@
 import axios from "axios";
+import simpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const form = document.querySelector('.search-form');
 const input = form.elements.searchQuery;
 const btn = form.elements.submitBtn;
 const gallery = document.querySelector('.gallery');
-
+const loader = document.querySelector('#loader');
 
 form.addEventListener('submit', onBtnSubmit);
+let page = 1;
 
 function onBtnSubmit(e) {
-       e.preventDefault();
-    const inputValue = input.value;
-    const API_KEY = '36186802-862f6fad69a85448277218aac';
-    let page = 1;
-    const BASE_URL = `https://pixabay.com/api/?key=${API_KEY}&q=${inputValue}=&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
-      axios.get(BASE_URL)
-        .then(response => {
-        const images = response.data.hits.map(image => ({
-            webformatURL: image.webformatURL,
-            largeImageURL: image.largeImageURL,
-            tags: image.tags,
-            likes: image.likes,
-            views: image.views,
-            comments: image.comments,
-            downloads: image.downloads
-        }));
-            gallery.insertAdjacentHTML('beforeend',renderMarkup(images))
-        })
+  gallery.innerHTML = '';
+  e.preventDefault();
+  loadContent();
 }
+function loadContent() {
+  const inputValue = input.value;
+  const API_KEY = '36186802-862f6fad69a85448277218aac';
+  const BASE_URL = `https://pixabay.com/api/?key=${API_KEY}&q=${inputValue}=&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${page}`;
+     axios.get(BASE_URL)
+    .then(response => {
+      const images = response.data.hits.map(image => ({
+        webformatURL: image.webformatURL,
+        largeImageURL: image.largeImageURL,
+        tags: image.tags,
+        likes: image.likes,
+        views: image.views,
+        comments: image.comments,
+        downloads: image.downloads
+      }))
+      gallery.insertAdjacentHTML('beforeend', renderMarkup(images));
+      const firstChild = gallery.firstElementChild;
+       if (firstChild) {
+         const { height: cardHeight } = document
+        .querySelector(".gallery")
+        .firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+      });
+      }
+    })
+       .catch(err => {
+        console.log('OOOOOPS')
+       });
+}
+const options = {
+  rootMargin: '0px',
+  threshold: 1.0
+};
+
+const observer = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    page++;
+    loadMoreContent();
+  }
+}, options);
+
+observer.observe(loader);
+
+function loadMoreContent() {
+  loadContent();
+}
+
+
  function renderMarkup(data) {
- return data.map(({webformatURL,tags, likes, views, comments, downloads}) => `<div class="photo-card">
+ return data.map(({webformatURL,largeImageURL,tags, likes, views, comments, downloads}) => `<a href="${largeImageURL}"><div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
@@ -49,15 +88,8 @@ function onBtnSubmit(e) {
       ${downloads}
     </p>
   </div>
-</div>`
+</div></a>`
  ).join('')
 };
 
-// const { height: cardHeight } = document
-//   .querySelector(".gallery")
-//   .firstElementChild.getBoundingClientRect();
-
-// window.scrollBy({
-//   top: cardHeight * 2,
-//   behavior: "smooth",
-// });
+let galleryImages = new simpleLightbox('.gallery a')

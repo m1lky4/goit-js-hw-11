@@ -66,3 +66,14 @@ justify-content: space-around;
     flex-direction: column;
     gap: 15px;
 }
+
+#loader {
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+}
+.gallery a {
+    color: inherit;
+    text-decoration: none;
+    
+}
