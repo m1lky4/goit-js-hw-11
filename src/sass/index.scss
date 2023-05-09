@@ -72,8 +72,15 @@ justify-content: space-around;
     margin: 20px auto;
     text-align: center;
 }
-.gallery a {
+ a {
     color: inherit;
     text-decoration: none;
     
-}
+ }
+ .scroll-up {
+    background-color: antiquewhite;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 20px;
+    right:20px;
+ }
