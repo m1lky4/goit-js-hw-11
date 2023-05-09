@@ -72,12 +72,7 @@ async function loadContent() {
     const firstChild = gallery.firstElementChild;
 
     if (firstChild) { 
-      const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
-
-      window.scrollBy({
-        top: cardHeight * 2,
-        behavior: "smooth",
-      })
+      setTimeout(smoothScroll, 400);
     }
   } catch (err) {
     Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.");
@@ -117,4 +112,14 @@ function onScrollUp(e) {
     top: 0,
     behavior:'smooth'
   })
+}
+function smoothScroll() {
+  const { height: cardHeight } = document
+    .querySelector(".gallery")
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: "smooth",
+  });
 }
